@@ -1,4 +1,4 @@
-package com.volmit.bile;
+package com.cepi.bile;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -33,6 +33,7 @@ public class BileTools extends JavaPlugin implements Listener, CommandExecutor {
 	public String tag;
 	private Sound sx;
 	private int cd = 10;
+
 	public static void l(String s) {
 		System.out.println("[Bile]: " + s);
 	}
@@ -277,7 +278,6 @@ public class BileTools extends JavaPlugin implements Listener, CommandExecutor {
 			}
 
 			if (args.length == 0) {
-				sender.sendMessage(tag + "/// - Ingame dev mode toggle");
 				sender.sendMessage(tag + "/bile load <plugin>");
 				sender.sendMessage(tag + "/bile unload <plugin>");
 				sender.sendMessage(tag + "/bile reload <plugin>");

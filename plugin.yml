@@ -1,6 +1,6 @@
 name: BileTools
 version: 2.1
-main: com.volmit.bile.BileTools
+main: com.cepi.bile.BileTools
 commands: 
   biletools:
     description: Manages biletools
