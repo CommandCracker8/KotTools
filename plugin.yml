@@ -1,9 +1,10 @@
-name: ${project.name}
-version: ${project.version}
+name: BileTools
+version: 2.1
 main: com.volmit.bile.BileTools
 commands: 
   biletools:
-    aliases: [bile, bi, b, volmit, vomit, vom]
+    description: Manages biletools
+    aliases: [bile]
 permissions:
   bile.use: 
     description: Gives access to biletools
