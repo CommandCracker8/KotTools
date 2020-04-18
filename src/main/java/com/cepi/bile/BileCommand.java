@@ -5,16 +5,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.StringUtil;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class BileCommand implements CommandExecutor {
+public class BileCommand implements CommandExecutor, TabCompleter {
 
-	public String tag;
+	public String tag = ChatColor.GREEN + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: "
+			+ ChatColor.GRAY;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -385,6 +389,36 @@ public class BileCommand implements CommandExecutor {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> finalList = new ArrayList<>();
+		if (args.length > 1) {
+			
+			List<String> list = new ArrayList<>();
+			
+			for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+				list.add(plugin.getName());
+			}
+				
+			StringUtil.copyPartialMatches(args[1], list, finalList);
+			Collections.sort(finalList);
+			
+		} else if (args.length > 0) {
+			List<String> list = new ArrayList<>();
+			
+			list.add("load");
+			list.add("unload");
+			list.add("reload");
+			list.add("install");
+			list.add("uninstall");
+			list.add("library");
+				
+			StringUtil.copyPartialMatches(args[0], list, finalList);
+			Collections.sort(finalList);
+		}
+		return finalList;
 	}
 
 }

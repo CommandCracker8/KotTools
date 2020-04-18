@@ -1,11 +1,7 @@
 package com.cepi.bile;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -102,26 +98,6 @@ public class BileTools extends JavaPlugin {
 		l("===========================================");
 	}
 
-	public static void streamFile(File f, String address, int port, String password)
-			throws UnknownHostException, IOException {
-		Socket s = new Socket(address, port);
-		DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-		dos.writeUTF(password);
-		dos.writeUTF(f.getName());
-
-		FileInputStream fin = new FileInputStream(f);
-		byte[] buffer = new byte[8192];
-		int read = 0;
-
-		while ((read = fin.read(buffer)) != -1) {
-			dos.write(buffer, 0, read);
-		}
-
-		fin.close();
-		dos.flush();
-		s.close();
-	}
-
 	@Override
 	public void onEnable() {
 
@@ -131,7 +107,9 @@ public class BileTools extends JavaPlugin {
 		folder = getDataFolder().getParentFile();
 		backoff = new File(getDataFolder(), "backoff");
 		backoff.mkdirs();
+		
 		getCommand("bile").setExecutor(new BileCommand());
+		getCommand("bile").setTabCompleter(new BileCommand());
 
 		for (Sound f : Sound.values()) {
 			if (f.name().contains("ORB")) {
@@ -140,20 +118,6 @@ public class BileTools extends JavaPlugin {
 		}
 
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 10, 0);
-	}
-
-	public boolean isBackoff(Player p) {
-		return new File(backoff, p.getUniqueId().toString()).exists();
-	}
-
-	public void toggleBackoff(Player p) {
-		if (new File(backoff, p.getUniqueId().toString()).exists()) {
-			new File(backoff, p.getUniqueId().toString()).delete();
-		}
-
-		else {
-			new File(backoff, p.getUniqueId().toString()).mkdirs();
-		}
 	}
 
 	public void reset(File f) {
