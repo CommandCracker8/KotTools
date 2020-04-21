@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
@@ -78,102 +76,7 @@ public class PluginUtil {
 
 		load(s);
 	}
-
-	/**
-	 * Enable all plugins.
-	 */
-	public static void enableAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			enable(plugin);
-		}
-	}
-
-	/**
-	 * Disable a plugin.
-	 *
-	 * @param plugin the plugin to disable
-	 */
-	public static void disable(Plugin plugin) {
-		if (plugin != null && plugin.isEnabled()) {
-			Bukkit.getPluginManager().disablePlugin(plugin);
-		}
-	}
-
-	/**
-	 * Disable all plugins.
-	 */
-	public static void disableAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			disable(plugin);
-		}
-	}
-
-	/**
-	 * Returns the formatted name of the plugin.
-	 *
-	 * @param plugin the plugin to format
-	 * @return the formatted name
-	 */
-	public static String getFormattedName(Plugin plugin) {
-		return getFormattedName(plugin, false);
-	}
-
-	/**
-	 * Returns the formatted name of the plugin.
-	 *
-	 * @param plugin          the plugin to format
-	 * @param includeVersions whether to include the version
-	 * @return the formatted name
-	 */
-	public static String getFormattedName(Plugin plugin, boolean includeVersions) {
-		ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
-		String pluginName = color + plugin.getName();
-		if (includeVersions) {
-			pluginName += " (" + plugin.getDescription().getVersion() + ")";
-		}
-
-		return pluginName;
-	}
-
-	/**
-	 * Returns a plugin from a String.
-	 *
-	 * @param name the name of the plugin
-	 * @return the plugin
-	 */
-	public static Plugin getPluginByName(String name) {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (name.equalsIgnoreCase(plugin.getName()))
-				return plugin;
-		}
-		return null;
-	}
-
-	/**
-	 * Returns a List of plugin names.
-	 *
-	 * @return list of plugin names
-	 */
-	public static List<String> getPluginNames(boolean fullName) {
-		List<String> plugins = new ArrayList<String>();
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
-		return plugins;
-	}
-
-	/**
-	 * Get the version of another plugin.
-	 *
-	 * @param name the name of the other plugin.
-	 * @return the version.
-	 */
-	public static String getPluginVersion(String name) {
-		Plugin plugin = getPluginByName(name);
-		if (plugin != null && plugin.getDescription() != null)
-			return plugin.getDescription().getVersion();
-		return null;
-	}
-
+	
 	/**
 	 * Checks whether the plugin is ignored.
 	 *

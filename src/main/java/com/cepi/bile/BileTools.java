@@ -31,7 +31,7 @@ public class BileTools extends JavaPlugin {
 		getCommand("bile").setExecutor(new BileCommand());
 		getCommand("bile").setTabCompleter(new BileCommand());
 
-		getServer().getScheduler().runTaskTimerAsynchronously(this, () -> onTick(), 20, 0);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 0);
 	}
 
 	public void reset(File f) {
@@ -59,6 +59,7 @@ public class BileTools extends JavaPlugin {
 					}
 
 					catch (Throwable e) {
+						e.printStackTrace();
 						for (Player k : Bukkit.getOnlinePlayers()) {
 							if (k.hasPermission("bile.use")) {
 								k.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.getName());

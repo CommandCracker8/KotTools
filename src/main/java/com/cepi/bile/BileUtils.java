@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
-import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -266,12 +263,6 @@ public class BileUtils {
 		Files.copy(a, b);
 	}
 
-	public static long hash(File file) throws NoSuchAlgorithmException {
-		ByteBuffer buf = ByteBuffer
-				.wrap(MessageDigest.getInstance("MD5").digest((file.lastModified() + "" + file.length()).getBytes()));
-		return buf.getLong() + buf.getLong();
-	}
-
 	public static Plugin getPlugin(File file) {
 		for (Plugin i : Bukkit.getPluginManager().getPlugins()) {
 			try {
@@ -354,7 +345,7 @@ public class BileUtils {
 		return getPluginDescription(file).getName();
 	}
 
-	public static PluginDescriptionFile getPluginDescription(File file)
+	private static PluginDescriptionFile getPluginDescription(File file)
 			throws ZipException, IOException, InvalidConfigurationException, InvalidDescriptionException {
 		ZipFile z = new ZipFile(file);
 		InputStream is = z.getInputStream(z.getEntry("plugin.yml"));
