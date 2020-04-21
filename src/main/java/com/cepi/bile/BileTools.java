@@ -31,7 +31,7 @@ public class BileTools extends JavaPlugin {
 		getCommand("bile").setExecutor(new BileCommand());
 		getCommand("bile").setTabCompleter(new BileCommand());
 
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 0);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 20);
 	}
 
 	public void reset(File f) {
