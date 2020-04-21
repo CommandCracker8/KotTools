@@ -115,7 +115,7 @@ public class PluginUtil {
 			for (File f : pluginDir.listFiles()) {
 				if (f.getName().endsWith(".jar")) {
 					try {
-						PluginDescriptionFile desc = BileTools.bile.getPluginLoader().getPluginDescription(f);
+						PluginDescriptionFile desc = BileTools.getPlugin(BileTools.class).getPluginLoader().getPluginDescription(f);
 						if (desc.getName().equalsIgnoreCase(name)) {
 							pluginFile = f;
 							break;
