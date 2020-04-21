@@ -1,5 +1,6 @@
 name: BileTools
 version: 2.1
+api-version: 1.15
 main: com.cepi.bile.BileTools
 commands: 
   biletools:

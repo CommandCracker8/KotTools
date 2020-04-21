@@ -8,7 +8,6 @@ import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +41,6 @@ public class BileUtils {
 	
 	public static void delete(Plugin p) throws IOException {
 		File f = getPluginFile(p);
-		backup(p);
 		unload(p);
 		f.delete();
 	}
@@ -53,15 +51,12 @@ public class BileUtils {
 			return;
 		}
 
-		PluginDescriptionFile fx = getPluginDescription(f);
-		copy(f, new File(getBackupLocation(fx.getName()), fx.getVersion() + ".jar"));
 		f.delete();
 	}
 
 	public static void reload(Plugin p) throws IOException, UnknownDependencyException, InvalidPluginException,
 			InvalidDescriptionException, InvalidConfigurationException {
 		File f = getPluginFile(p);
-		backup(p);
 		Set<File> x = unload(p);
 
 		for (File i : x) {
@@ -265,30 +260,6 @@ public class BileUtils {
 		return deps;
 	}
 
-	public static File getBackupLocation(Plugin p) {
-		return new File(new File(BileTools.bile.getDataFolder(), "library"), p.getName());
-	}
-
-	public static File getBackupLocation(String n) {
-		return new File(new File(BileTools.bile.getDataFolder(), "library"), n);
-	}
-
-	public List<String> getBackedUpVersions(Plugin p) {
-		List<String> s = new ArrayList<String>();
-
-		if (getBackupLocation(p).exists()) {
-			for (File i : getBackupLocation(p).listFiles()) {
-				s.add(i.getName().replace(".jar", ""));
-			}
-		}
-
-		return s;
-	}
-
-	public static void backup(Plugin p) throws IOException {
-		System.out.println("Backed up " + p.getName() + " " + p.getDescription().getVersion());
-		copy(getPluginFile(p), new File(getBackupLocation(p), p.getDescription().getVersion() + ".jar"));
-	}
 
 	public static void copy(File a, File b) throws IOException {
 		b.getParentFile().mkdirs();
