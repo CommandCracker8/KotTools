@@ -280,9 +280,7 @@ public class BileUtils {
 				}
 			}
 
-			catch (Throwable e) {
-
-			}
+			catch (Throwable e) { }
 		}
 
 		return null;

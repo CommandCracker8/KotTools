@@ -17,45 +17,43 @@ public class BileTools extends JavaPlugin {
 	public final static String tag = ChatColor.GREEN + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: "
 			+ ChatColor.GRAY;
 
-	private static HashMap<File, Long> mod = new HashMap<File, Long>();
+	private static HashMap<File, Long> modification = new HashMap<File, Long>();
 	private static HashMap<File, Long> las = new HashMap<File, Long>();
 
 	public static BileTools bile;
 	private File folder = new File("plugins");
-	private Sound sx = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+	private Sound successSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
 	@Override
 	public void onEnable() {
 
 		bile = this;
-		mod = new HashMap<File, Long>();
-		las = new HashMap<File, Long>();
 		getCommand("bile").setExecutor(new BileCommand());
 		getCommand("bile").setTabCompleter(new BileCommand());
 
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 0);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, () -> onTick(), 20, 0);
 	}
 
 	public void reset(File f) {
-		mod.put(f, f.length());
+		modification.put(f, f.length());
 		las.put(f, f.lastModified());
 	}
 
 	public void onTick() {
 		for (File i : folder.listFiles()) {
-			if (i.getName().toLowerCase().endsWith(".jar") && i.isFile()) {
-				if (!mod.containsKey(i)) {
+			if (i.isFile() && i.getName().toLowerCase().endsWith(".jar")) {
+				if (!modification.containsKey(i)) {
 					getLogger().log(Level.INFO, "Now Tracking: " + i.getName());
-					mod.put(i, i.length());
+					modification.put(i, i.length());
 					las.put(i, i.lastModified());
 
 					try {
 						BileUtils.load(i);
 
-						for (Player k : Bukkit.getOnlinePlayers()) {
-							if (k.hasPermission("bile.use")) {
-								k.sendMessage(tag + "Hot Dropped " + ChatColor.WHITE + i.getName());
-								k.playSound(k.getLocation(), sx, 1f, 1.9f);
+						for (Player player : Bukkit.getOnlinePlayers()) {
+							if (player.hasPermission("bile.use")) {
+								player.sendMessage(tag + "Hot Dropped " + ChatColor.WHITE + i.getName());
+								player.playSound(player.getLocation(), successSound, 1f, 1.9f);
 							}
 						}
 					}
@@ -69,15 +67,13 @@ public class BileTools extends JavaPlugin {
 					}
 				}
 
-				if (mod.get(i) != i.length() || las.get(i) != i.lastModified()) {
-					mod.put(i, i.length());
+				if (modification.get(i) != i.length() || las.get(i) != i.lastModified()) {
+					modification.put(i, i.length());
 					las.put(i, i.lastModified());
 					for (Plugin j : Bukkit.getServer().getPluginManager().getPlugins()) {
 						if (BileUtils.getPluginFile(j) != null
 								&& BileUtils.getPluginFile(j).getName().equals(i.getName())) {
-							getLogger().log(Level.INFO, "File change detected: " + i.getName());
-							getLogger().log(Level.INFO, "Identified Plugin: " + j.getName() + " <-> " + i.getName());
-							getLogger().log(Level.INFO, "Reloading: " + j.getName());
+							getLogger().log(Level.INFO, "Plugin Reloading: " + j.getName() + " <-> " + i.getName());
 
 							try {
 
@@ -85,7 +81,7 @@ public class BileTools extends JavaPlugin {
 
 								for (Player k : Bukkit.getOnlinePlayers()) {
 									k.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.getName());
-									k.playSound(k.getLocation(), sx, 1f, 1.9f);
+									k.playSound(k.getLocation(), successSound, 1f, 1.9f);
 								}
 							}
 
