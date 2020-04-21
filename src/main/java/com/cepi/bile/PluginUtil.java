@@ -175,87 +175,6 @@ public class PluginUtil {
 	}
 
 	/**
-	 * Find which plugin has a given command registered.
-	 *
-	 * @param command the command.
-	 * @return the plugin.
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<String> findByCommand(String command) {
-
-		List<String> plugins = new ArrayList<String>();
-
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-
-			// Map of commands and their attributes.
-			Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
-
-			if (commands != null) {
-
-				// Iterator for all the plugin's commands.
-				Iterator<Map.Entry<String, Map<String, Object>>> commandIterator = commands.entrySet().iterator();
-
-				while (commandIterator.hasNext()) {
-
-					// Current value.
-					Map.Entry<String, Map<String, Object>> commandNext = commandIterator.next();
-
-					// Plugin name matches - return.
-					if (commandNext.getKey().equalsIgnoreCase(command)) {
-						plugins.add(plugin.getName());
-						continue;
-					}
-
-					// No match - let's iterate over the attributes and see if
-					// it has aliases.
-					Iterator<Map.Entry<String, Object>> attributeIterator = commandNext.getValue().entrySet()
-							.iterator();
-
-					while (attributeIterator.hasNext()) {
-
-						// Current value.
-						Map.Entry<String, Object> attributeNext = attributeIterator.next();
-
-						// Has an alias attribute.
-						if (attributeNext.getKey().equals("aliases")) {
-
-							Object aliases = attributeNext.getValue();
-
-							if (aliases instanceof String) {
-								if (((String) aliases).equalsIgnoreCase(command)) {
-									plugins.add(plugin.getName());
-									continue;
-								}
-							} else {
-
-								// Cast to a List of Strings.
-								List<String> array = (List<String>) aliases;
-
-								// Check for matches here.
-								for (String str : array) {
-									if (str.equalsIgnoreCase(command)) {
-										plugins.add(plugin.getName());
-										continue;
-									}
-								}
-
-							}
-
-						}
-
-					}
-				}
-
-			}
-
-		}
-
-		// No matches.
-		return plugins;
-
-	}
-
-	/**
 	 * Checks whether the plugin is ignored.
 	 *
 	 * @param plugin the plugin to check
@@ -270,48 +189,6 @@ public class PluginUtil {
 	 */
 	private static void load(Plugin plugin) {
 		load(plugin.getName());
-	}
-
-	public static String getPluginFileName(String name) {
-		File pluginDir = BileTools.bile.getDataFolder().getParentFile();
-
-		for (File f : pluginDir.listFiles()) {
-			if (f.getName().endsWith(".jar")) {
-				try {
-					PluginDescriptionFile desc = BileTools.bile.getPluginLoader().getPluginDescription(f);
-					if (desc.getName().equalsIgnoreCase(name)) {
-						return f.getName();
-					}
-				}
-
-				catch (InvalidDescriptionException e) {
-
-				}
-			}
-		}
-
-		return null;
-	}
-
-	public static String getPluginFileNameUnsafe(String name, Plugin ins) {
-		File pluginDir = ins.getDataFolder().getParentFile();
-
-		for (File f : pluginDir.listFiles()) {
-			if (f.getName().endsWith(".jar")) {
-				try {
-					PluginDescriptionFile desc = ins.getPluginLoader().getPluginDescription(f);
-					if (desc.getName().equalsIgnoreCase(name)) {
-						return f.getName();
-					}
-				}
-
-				catch (InvalidDescriptionException e) {
-
-				}
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -392,7 +269,7 @@ public class PluginUtil {
 	 * @return the message to send to the user.
 	 */
 	@SuppressWarnings("unchecked")
-	public static void unload(Plugin plugin) {
+	private static void unload(Plugin plugin) {
 		String name = plugin.getName();
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
