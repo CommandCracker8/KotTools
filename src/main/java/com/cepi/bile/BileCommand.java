@@ -21,176 +21,172 @@ public class BileCommand implements CommandExecutor, TabCompleter {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (command.getName().equals("biletools")) {
-			if (!sender.hasPermission("bile.use")) {
-				sender.sendMessage(tag + "You need bile.use or OP.");
-				return true;
-			}
+		if (!sender.hasPermission("bile.use")) {
+			sender.sendMessage(tag + "You need bile.use or OP.");
+			return true;
+		}
 
-			if (args.length == 0) {
-				sender.sendMessage(tag + "/bile load <plugin>");
-				sender.sendMessage(tag + "/bile unload <plugin>");
-				sender.sendMessage(tag + "/bile reload <plugin>");
-				sender.sendMessage(tag + "/bile uninstall <plugin>");
-			}
+		if (args.length == 0) {
+			sender.sendMessage(tag + "/bile load <plugin>");
+			sender.sendMessage(tag + "/bile unload <plugin>");
+			sender.sendMessage(tag + "/bile reload <plugin>");
+			sender.sendMessage(tag + "/bile uninstall <plugin>");
+		}
 
-			else {
-				if (args[0].equalsIgnoreCase("load")) {
-					if (args.length > 1) {
-						for (int i = 1; i < args.length; i++) {
+		else {
+			if (args[0].equalsIgnoreCase("load")) {
+				if (args.length > 1) {
+					for (int i = 1; i < args.length; i++) {
+						try {
+							File s = BileUtils.getPluginFile(args[i]);
+
+							if (s == null) {
+								sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
+								continue;
+							}
+
 							try {
-								File s = BileUtils.getPluginFile(args[i]);
+								BileUtils.load(s);
+								String n = BileUtils.getPluginByName(args[i]).getName();
+								sender.sendMessage(tag + "Loaded " + ChatColor.WHITE + n + ChatColor.GRAY + " from "
+										+ ChatColor.WHITE + s.getName());
+							}
 
-								if (s == null) {
-									sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
-									continue;
+							catch (Throwable e) {
+								sender.sendMessage(tag + "Couldn't load \"" + args[i] + "\".");
+								e.printStackTrace();
+							}
+						}
+
+						catch (Throwable e) {
+							sender.sendMessage(tag + "Couldn't load or find \"" + args[i] + "\".");
+							e.printStackTrace();
+						}
+					}
+				}
+
+				else {
+					sender.sendMessage(tag + "/bile load <PLUGIN>");
+				}
+			}
+
+			if (args[0].equalsIgnoreCase("uninstall")) {
+				if (args.length > 1) {
+					for (int i = 1; i < args.length; i++) {
+						try {
+							File s = BileUtils.getPluginFile(args[i]);
+
+							if (s == null) {
+								sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
+								continue;
+							}
+
+							try {
+								String n = BileUtils.getPluginName(s);
+								BileUtils.delete(s);
+
+								if (!s.exists()) {
+									sender.sendMessage(tag + "Uninstalled " + ChatColor.WHITE + n + ChatColor.GRAY
+											+ " from " + ChatColor.WHITE + s.getName());
 								}
 
-								try {
-									BileUtils.load(s);
-									String n = BileUtils.getPluginByName(args[i]).getName();
-									sender.sendMessage(tag + "Loaded " + ChatColor.WHITE + n + ChatColor.GRAY + " from "
-											+ ChatColor.WHITE + s.getName());
-								}
-
-								catch (Throwable e) {
-									sender.sendMessage(tag + "Couldn't load \"" + args[i] + "\".");
-									e.printStackTrace();
+								else {
+									sender.sendMessage(tag + "Uninstalled " + ChatColor.WHITE + n + ChatColor.GRAY
+											+ " from " + ChatColor.WHITE + s.getName());
+									sender.sendMessage(
+											tag + "But it looks like we can't delete it. You may need to delete "
+													+ ChatColor.RED + s.getName() + ChatColor.GRAY
+													+ " before installing it again.");
 								}
 							}
 
 							catch (Throwable e) {
-								sender.sendMessage(tag + "Couldn't load or find \"" + args[i] + "\".");
+								sender.sendMessage(tag + "Couldn't uninstall \"" + args[i] + "\".");
 								e.printStackTrace();
 							}
 						}
-					}
 
-					else {
-						sender.sendMessage(tag + "/bile load <PLUGIN>");
-					}
-				}
-
-				if (args[0].equalsIgnoreCase("uninstall")) {
-					if (args.length > 1) {
-						for (int i = 1; i < args.length; i++) {
-							try {
-								File s = BileUtils.getPluginFile(args[i]);
-
-								if (s == null) {
-									sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
-									continue;
-								}
-
-								try {
-									String n = BileUtils.getPluginName(s);
-									BileUtils.delete(s);
-
-									if (!s.exists()) {
-										sender.sendMessage(tag + "Uninstalled " + ChatColor.WHITE + n + ChatColor.GRAY
-												+ " from " + ChatColor.WHITE + s.getName());
-									}
-
-									else {
-										sender.sendMessage(tag + "Uninstalled " + ChatColor.WHITE + n + ChatColor.GRAY
-												+ " from " + ChatColor.WHITE + s.getName());
-										sender.sendMessage(
-												tag + "But it looks like we can't delete it. You may need to delete "
-														+ ChatColor.RED + s.getName() + ChatColor.GRAY
-														+ " before installing it again.");
-									}
-								}
-
-								catch (Throwable e) {
-									sender.sendMessage(tag + "Couldn't uninstall \"" + args[i] + "\".");
-									e.printStackTrace();
-								}
-							}
-
-							catch (Throwable e) {
-								sender.sendMessage(tag + "Couldn't uninstall or find \"" + args[i] + "\".");
-								e.printStackTrace();
-							}
+						catch (Throwable e) {
+							sender.sendMessage(tag + "Couldn't uninstall or find \"" + args[i] + "\".");
+							e.printStackTrace();
 						}
 					}
+				}
 
-					else {
-						sender.sendMessage(tag + "/bile uninstall <PLUGIN>");
+				else {
+					sender.sendMessage(tag + "/bile uninstall <PLUGIN>");
+				}
+			}
+
+			else if (args[0].equalsIgnoreCase("unload")) {
+				if (args.length > 1) {
+					for (int i = 1; i < args.length; i++) {
+						try {
+							Plugin s = BileUtils.getPluginByName(args[i]);
+
+							if (s == null) {
+								sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
+								continue;
+							}
+
+							String sn = s.getName();
+							BileUtils.unload(s);
+							File n = BileUtils.getPluginFile(args[i]);
+							sender.sendMessage(tag + "Unloaded " + ChatColor.WHITE + sn + ChatColor.GRAY + " ("
+									+ ChatColor.WHITE + n.getName() + ChatColor.GRAY + ")");
+						}
+
+						catch (Throwable e) {
+							sender.sendMessage(tag + "Couldn't unload \"" + args[i] + "\".");
+							e.printStackTrace();
+						}
 					}
 				}
 
-				else if (args[0].equalsIgnoreCase("unload")) {
-					if (args.length > 1) {
-						for (int i = 1; i < args.length; i++) {
+				else {
+					sender.sendMessage(tag + "/bile unload <PLUGIN>");
+				}
+			}
+
+			else if (args[0].equalsIgnoreCase("reload")) {
+				if (args.length > 1) {
+					for (int i = 1; i < args.length; i++) {
+						try {
+							Plugin s = BileUtils.getPluginByName(args[i]);
+
+							if (s == null) {
+								sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
+								continue;
+							}
+
 							try {
-								Plugin s = BileUtils.getPluginByName(args[i]);
-
-								if (s == null) {
-									sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
-									continue;
-								}
-
 								String sn = s.getName();
-								BileUtils.unload(s);
+								BileUtils.reload(s);
 								File n = BileUtils.getPluginFile(args[i]);
-								sender.sendMessage(tag + "Unloaded " + ChatColor.WHITE + sn + ChatColor.GRAY + " ("
+								sender.sendMessage(tag + "Reloaded " + ChatColor.WHITE + sn + ChatColor.GRAY + " ("
 										+ ChatColor.WHITE + n.getName() + ChatColor.GRAY + ")");
 							}
 
 							catch (Throwable e) {
-								sender.sendMessage(tag + "Couldn't unload \"" + args[i] + "\".");
+								sender.sendMessage(tag + "Couldn't reload \"" + args[i] + "\".");
 								e.printStackTrace();
 							}
 						}
-					}
 
-					else {
-						sender.sendMessage(tag + "/bile unload <PLUGIN>");
+						catch (Throwable e) {
+							sender.sendMessage(tag + "Couldn't reload or find \"" + args[i] + "\".");
+							e.printStackTrace();
+						}
 					}
 				}
 
-				else if (args[0].equalsIgnoreCase("reload")) {
-					if (args.length > 1) {
-						for (int i = 1; i < args.length; i++) {
-							try {
-								Plugin s = BileUtils.getPluginByName(args[i]);
-
-								if (s == null) {
-									sender.sendMessage(tag + "Couldn't find \"" + args[i] + "\".");
-									continue;
-								}
-
-								try {
-									String sn = s.getName();
-									BileUtils.reload(s);
-									File n = BileUtils.getPluginFile(args[i]);
-									sender.sendMessage(tag + "Reloaded " + ChatColor.WHITE + sn + ChatColor.GRAY + " ("
-											+ ChatColor.WHITE + n.getName() + ChatColor.GRAY + ")");
-								}
-
-								catch (Throwable e) {
-									sender.sendMessage(tag + "Couldn't reload \"" + args[i] + "\".");
-									e.printStackTrace();
-								}
-							}
-
-							catch (Throwable e) {
-								sender.sendMessage(tag + "Couldn't reload or find \"" + args[i] + "\".");
-								e.printStackTrace();
-							}
-						}
-					}
-
-					else {
-						sender.sendMessage(tag + "/bile reload <PLUGIN>");
-					}
+				else {
+					sender.sendMessage(tag + "/bile reload <PLUGIN>");
 				}
 			}
-
-			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

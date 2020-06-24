@@ -27,11 +27,15 @@ public class BileTools extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+		
+		
 		bile = this;
 		getCommand("bile").setExecutor(new BileCommand());
 		getCommand("bile").setTabCompleter(new BileCommand());
-
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 20);
+		if (getConfig().getBoolean("doAutoUpdate"))
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> onTick(), 20, 20);
 	}
 
 	public void reset(File f) {
