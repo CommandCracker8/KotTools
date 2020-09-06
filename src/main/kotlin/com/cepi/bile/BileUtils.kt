@@ -116,10 +116,10 @@ object BileUtils {
         HandlerList.unregisterAll(plugin)
         val name = plugin.name
         val pluginManager = Bukkit.getPluginManager()
-        var commandMap: SimpleCommandMap? = null
-        var plugins: MutableList<Plugin?>? = null
-        var names: MutableMap<String?, Plugin?>? = null
-        var commands: MutableMap<String?, Command>? = null
+        var commandMap: SimpleCommandMap?
+        var plugins: MutableList<Plugin?>?
+        var names: MutableMap<String?, Plugin?>?
+        var commands: MutableMap<String?, Command>?
         var listeners: Map<Event?, SortedSet<RegisteredListener>>? = null
         var reloadlisteners = true
         pluginManager.disablePlugin(plugin)
@@ -237,6 +237,7 @@ object BileUtils {
                 return i
             }
         }
+
         for (i in pluginsFolder.listFiles()) {
             try {
                 if (isPluginJar(i) && i.isFile && getPluginName(i).toLowerCase() == name.toLowerCase()) {
@@ -249,7 +250,7 @@ object BileUtils {
     }
 
     private fun isPluginJar(f: File): Boolean {
-        return f != null && f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
+        return f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
     }
 
     private val pluginsFolder: File
