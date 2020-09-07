@@ -9,7 +9,6 @@ import java.util.*
 import java.util.logging.Level
 
 class BileTools : JavaPlugin() {
-    private val folder = File("plugins")
     private val successSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP
 
     override fun onEnable() {
@@ -18,7 +17,9 @@ class BileTools : JavaPlugin() {
         bile = this
         getCommand("bile")!!.setExecutor(BileCommand())
         getCommand("bile")!!.tabCompleter = BileCommand()
-        if (config.getBoolean("doAutoUpdate")) server.scheduler.scheduleSyncRepeatingTask(this, { onTick() }, 20, 20)
+
+        if (config.getBoolean("doAutoUpdate"))
+            server.scheduler.scheduleSyncRepeatingTask(this, { onTick() }, 20, 20)
     }
 
     fun reset(f: File?) {
@@ -87,6 +88,7 @@ class BileTools : JavaPlugin() {
                 + ChatColor.GRAY)
         private val modification = HashMap<File?, Long>()
         private val las = HashMap<File?, Long>()
+        val folder = File("plugins")
         var bile: BileTools? = null
     }
 }

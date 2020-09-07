@@ -19,30 +19,31 @@ import java.util.zip.ZipFile
 
 object BileUtils {
     @Throws(IOException::class)
-    fun delete(p: Plugin) {
-        val f = getPluginFile(p)
-        unload(p)
-        f!!.delete()
+    fun delete(plugin: Plugin) {
+        val file = getPluginFile(plugin)
+        unload(plugin)
+        file!!.delete()
     }
 
     @Throws(IOException::class, InvalidConfigurationException::class, InvalidDescriptionException::class)
-    fun delete(f: File) {
-        if (getPlugin(f) != null) {
-            getPlugin(f)?.let { delete(it) }
+    fun delete(file: File) {
+        if (getPlugin(file) != null) {
+            getPlugin(file)?.let { delete(it) }
             return
         }
-        f.delete()
+        file.delete()
     }
 
     @Throws(IOException::class, UnknownDependencyException::class, InvalidPluginException::class, InvalidDescriptionException::class, InvalidConfigurationException::class)
     fun reload(p: Plugin) {
-        val f = getPluginFile(p)
+        val file = getPluginFile(p)
         val x = unload(p)
         for (i in x)
             if (i != null)
                 load(i)
-        if (f != null)
-            load(f)
+
+        if (file != null)
+            load(file)
     }
 
     private fun stp(s: String) {
@@ -85,43 +86,43 @@ object BileUtils {
     fun unload(plugin: Plugin): Set<File?> {
         val file = getPluginFile(plugin)
         stp("Unloading " + plugin.name)
-        val deps: MutableSet<File?> = HashSet()
+        val dependencies: MutableSet<File?> = HashSet()
         for (i in Bukkit.getPluginManager().plugins) {
-            if (i == plugin) {
+            if (i == plugin)
                 continue
-            }
 
             if (i.description.softDepend.contains(plugin.name)) {
                 stp(i.name + " soft depends on " + plugin.name + ". Playing it safe.")
-                deps.add(getPluginFile(i))
+                dependencies.add(getPluginFile(i))
             }
 
             if (i.description.depend.contains(plugin.name)) {
                 stp(i.name + " depends on " + plugin.name + ". Playing it safe.")
-                deps.add(getPluginFile(i))
+                dependencies.add(getPluginFile(i))
             }
         }
+
         if (plugin.name == "WorldEdit") {
             val fa = Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit")
             if (fa != null) {
                 stp(fa.name + " (kind of) depends on " + plugin.name + ". Playing it safe.")
-                deps.add(getPluginFile(fa))
+                dependencies.add(getPluginFile(fa))
             }
         }
-        for (i in HashSet(deps)) {
+        for (i in HashSet(dependencies)) {
             if (i != null)
-                getPlugin(i)?.let { unload(it) }?.let { deps.addAll(it) }
+                getPlugin(i)?.let { unload(it) }?.let { dependencies.addAll(it) }
         }
         Bukkit.getScheduler().cancelTasks(plugin)
         HandlerList.unregisterAll(plugin)
         val name = plugin.name
         val pluginManager = Bukkit.getPluginManager()
-        var commandMap: SimpleCommandMap?
-        var plugins: MutableList<Plugin?>?
-        var names: MutableMap<String?, Plugin?>?
-        var commands: MutableMap<String?, Command>?
+        val commandMap: SimpleCommandMap?
+        val plugins: MutableList<Plugin?>?
+        val names: MutableMap<String?, Plugin?>?
+        val commands: MutableMap<String?, Command>?
         var listeners: Map<Event?, SortedSet<RegisteredListener>>? = null
-        var reloadlisteners = true
+        var reloadListeners = true
         pluginManager.disablePlugin(plugin)
         try {
             val pluginsField = Bukkit.getPluginManager().javaClass.getDeclaredField("plugins")
@@ -135,7 +136,7 @@ object BileUtils {
                 listenersField.isAccessible = true
                 listeners = listenersField[pluginManager] as Map<Event?, SortedSet<RegisteredListener>>
             } catch (e: Exception) {
-                reloadlisteners = false
+                reloadListeners = false
             }
             val commandMapField = Bukkit.getPluginManager().javaClass.getDeclaredField("commandMap")
             val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
@@ -148,13 +149,14 @@ object BileUtils {
             return HashSet()
         }
         pluginManager.disablePlugin(plugin)
-        if (plugins.contains(plugin)) {
+
+        if (plugins.contains(plugin))
             plugins.remove(plugin)
-        }
-        if (names.containsKey(name)) {
+
+        if (names.containsKey(name))
             names.remove(name)
-        }
-        if (listeners != null && reloadlisteners) {
+
+        if (listeners != null && reloadListeners) {
             for (set in listeners.values) {
                 val it = set.iterator()
                 while (it.hasNext()) {
@@ -176,19 +178,20 @@ object BileUtils {
                 }
             }
         }
-        val cl = plugin.javaClass.classLoader
-        if (cl is URLClassLoader) {
+        val classLoader = plugin.javaClass.classLoader
+        if (classLoader is URLClassLoader) {
             try {
-                cl.close()
+                classLoader.close()
             } catch (ex: IOException) {
                 ex.printStackTrace()
             }
         }
-        val idx = UUID.randomUUID().toString()
-        val ff = File(File(BileTools.bile!!.dataFolder, "temp"), idx)
+        val randomUUID = UUID.randomUUID().toString()
+        val ff = File(File(BileTools.bile!!.dataFolder, "temp"), randomUUID)
         System.gc()
         try {
-            copy(file, ff)
+            if (file != null)
+                copy(file, ff)
             file!!.delete()
             copy(ff, file)
             BileTools.bile!!.reset(file)
@@ -196,12 +199,12 @@ object BileUtils {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return deps
+        return dependencies
     }
 
     @Throws(IOException::class)
-    fun copy(a: File?, b: File?) {
-        b!!.parentFile.mkdirs()
+    fun copy(a: File, b: File) {
+        b.parentFile.mkdirs()
         Files.copy(a, b)
     }
 
@@ -232,16 +235,16 @@ object BileUtils {
     }
 
     fun getPluginFile(name: String): File? {
-        for (i in pluginsFolder.listFiles()) {
-            if (isPluginJar(i) && i.isFile && i.name.toLowerCase() == name.toLowerCase()) {
-                return i
+        for (plugin in pluginsFolder.listFiles()) {
+            if (isPluginJar(plugin) && plugin.isFile && plugin.name.toLowerCase() == name.toLowerCase()) {
+                return plugin
             }
         }
 
-        for (i in pluginsFolder.listFiles()) {
+        for (plugin in pluginsFolder.listFiles()) {
             try {
-                if (isPluginJar(i) && i.isFile && getPluginName(i).toLowerCase() == name.toLowerCase()) {
-                    return i
+                if (isPluginJar(plugin) && plugin.isFile && getPluginName(plugin).toLowerCase() == name.toLowerCase()) {
+                    return plugin
                 }
             } catch (e: Throwable) {
             }
@@ -251,18 +254,13 @@ object BileUtils {
 
     private fun isPluginJar(f: File): Boolean = f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
 
-    private val pluginsFolder: File
-        get() = BileTools.bile!!.dataFolder.parentFile
+    private val pluginsFolder: File = BileTools.folder
 
     @Throws(ZipException::class, IOException::class, InvalidConfigurationException::class, InvalidDescriptionException::class)
-    fun getPluginVersion(file: File): String {
-        return getPluginDescription(file).version
-    }
+    fun getPluginVersion(file: File) = getPluginDescription(file).version
 
     @Throws(ZipException::class, IOException::class, InvalidConfigurationException::class, InvalidDescriptionException::class)
-    fun getPluginName(file: File): String {
-        return getPluginDescription(file).name
-    }
+    fun getPluginName(file: File) = getPluginDescription(file).name
 
     @Throws(ZipException::class, IOException::class, InvalidConfigurationException::class, InvalidDescriptionException::class)
     private fun getPluginDescription(file: File): PluginDescriptionFile {
