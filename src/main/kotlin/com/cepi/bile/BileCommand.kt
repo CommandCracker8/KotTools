@@ -10,9 +10,10 @@ import org.bukkit.util.StringUtil
 import java.util.*
 
 class BileCommand : CommandExecutor, TabCompleter {
-    private var tag = ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: " + ChatColor.GRAY
+    private var tag = BileTools.tag
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+
         require(sender.hasPermission("bile.use")) {
             sender.sendMessage(tag + "You need bile.use or OP.")
             return true
@@ -141,7 +142,7 @@ class BileCommand : CommandExecutor, TabCompleter {
         return true
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<String>): List<String>? {
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<String>): List<String> {
         val finalList: MutableList<String> = ArrayList()
         if (args.size > 1) {
             val list = Bukkit.getPluginManager().plugins.map { it.name }.toList()

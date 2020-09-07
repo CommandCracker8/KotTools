@@ -249,9 +249,7 @@ object BileUtils {
         return null
     }
 
-    private fun isPluginJar(f: File): Boolean {
-        return f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
-    }
+    private fun isPluginJar(f: File): Boolean = f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
 
     private val pluginsFolder: File
         get() = BileTools.bile!!.dataFolder.parentFile
@@ -275,17 +273,5 @@ object BileUtils {
         return f
     }
 
-    fun getPluginByName(string: String): Plugin? {
-        for (i in Bukkit.getPluginManager().plugins) {
-            if (i.name.toLowerCase() == string.toLowerCase()) {
-                return i
-            }
-        }
-        for (i in Bukkit.getPluginManager().plugins) {
-            if (i.name.toLowerCase().contains(string.toLowerCase())) {
-                return i
-            }
-        }
-        return null
-    }
+    fun getPluginByName(string: String) = Bukkit.getPluginManager().plugins.find {it.name.toLowerCase().contains(string.toLowerCase()) }
 }

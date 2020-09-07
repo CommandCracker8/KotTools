@@ -11,6 +11,7 @@ import java.util.logging.Level
 class BileTools : JavaPlugin() {
     private val folder = File("plugins")
     private val successSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP
+
     override fun onEnable() {
         config.options().copyDefaults(true)
         saveConfig()
@@ -26,7 +27,12 @@ class BileTools : JavaPlugin() {
     }
 
     private fun onTick() {
-        for (i in folder.listFiles()) {
+
+        val files = folder.listFiles()
+
+        require(files != null) // If this throws an error, I dont know what witchery the user committed, but ok.
+
+        for (i in files) {
             if (i.isFile && i.name.toLowerCase().endsWith(".jar")) {
                 if (!modification.containsKey(i)) {
                     logger.log(Level.INFO, "Now Tracking: " + i.name)
@@ -42,11 +48,9 @@ class BileTools : JavaPlugin() {
                         }
                     } catch (e: Throwable) {
                         e.printStackTrace()
-                        for (k in Bukkit.getOnlinePlayers()) {
-                            if (k.hasPermission("bile.use")) {
-                                k.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name)
-                            }
-                        }
+                        Bukkit.getOnlinePlayers()
+                                .filter { it.hasPermission("bile.use") }
+                                .forEach { it.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name) }
                     }
                 }
                 if (modification[i] != i.length() || las[i] != i.lastModified()) {
@@ -55,19 +59,19 @@ class BileTools : JavaPlugin() {
                     for (j in Bukkit.getServer().pluginManager.plugins) {
                         if (BileUtils.getPluginFile(j) != null
                                 && BileUtils.getPluginFile(j)!!.name == i.name) {
-                            logger.log(Level.INFO, "Plugin Reloading: " + j.name + " <-> " + i.name)
+                            logger.info("Plugin Reloading: " + j.name + " <-> " + i.name)
                             try {
                                 BileUtils.reload(j)
-                                for (k in Bukkit.getOnlinePlayers()) {
-                                    k.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.name)
-                                    k.playSound(k.location, successSound, 1f, 1.9f)
+                                Bukkit.getOnlinePlayers()
+                                        .filter { it.hasPermission("bile.use") }
+                                        .forEach {
+                                    it.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.name)
+                                    it.playSound(it.location, successSound, 1f, 1.9f)
                                 }
                             } catch (e: Throwable) {
-                                for (k in Bukkit.getOnlinePlayers()) {
-                                    if (k.hasPermission("bile.use")) {
-                                        k.sendMessage(tag + "Failed to Reload " + ChatColor.RED + j.name)
-                                    }
-                                }
+                                Bukkit.getOnlinePlayers()
+                                        .filter { it.hasPermission("bile.use") }
+                                        .forEach { it.sendMessage(tag + "Failed to Reload " + ChatColor.RED + j.name) }
                                 e.printStackTrace()
                             }
                             break
