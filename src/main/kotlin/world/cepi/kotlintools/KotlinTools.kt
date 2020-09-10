@@ -15,8 +15,8 @@ class KotlinTools : JavaPlugin() {
         config.options().copyDefaults(true)
         saveConfig()
         kotlin = this
-        getCommand("bile")!!.setExecutor(KotlinCommand())
-        getCommand("bile")!!.tabCompleter = KotlinCommand()
+        getCommand("kotlin")!!.setExecutor(KotlinCommand())
+        getCommand("kotlin")!!.tabCompleter = KotlinCommand()
 
         if (config.getBoolean("doAutoUpdate"))
             server.scheduler.scheduleSyncRepeatingTask(this, { onTick() }, 20, 20)
@@ -42,7 +42,7 @@ class KotlinTools : JavaPlugin() {
                     try {
                         KotlinUtils.load(i)
                         for (player in Bukkit.getOnlinePlayers()) {
-                            if (player.hasPermission("bile.use")) {
+                            if (player.hasPermission("kotlin.use")) {
                                 player.sendMessage(tag + "Hot Dropped " + ChatColor.WHITE + i.name)
                                 player.playSound(player.location, successSound, 1f, 1.9f)
                             }
@@ -50,7 +50,7 @@ class KotlinTools : JavaPlugin() {
                     } catch (e: Throwable) {
                         e.printStackTrace()
                         Bukkit.getOnlinePlayers()
-                                .filter { it.hasPermission("bile.use") }
+                                .filter { it.hasPermission("kotlin.use") }
                                 .forEach { it.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name) }
                     }
                 }
@@ -64,14 +64,14 @@ class KotlinTools : JavaPlugin() {
                             try {
                                 KotlinUtils.reload(j)
                                 Bukkit.getOnlinePlayers()
-                                        .filter { it.hasPermission("bile.use") }
+                                        .filter { it.hasPermission("kotlin.use") }
                                         .forEach {
                                     it.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.name)
                                     it.playSound(it.location, successSound, 1f, 1.9f)
                                 }
                             } catch (e: Throwable) {
                                 Bukkit.getOnlinePlayers()
-                                        .filter { it.hasPermission("bile.use") }
+                                        .filter { it.hasPermission("kotlin.use") }
                                         .forEach { it.sendMessage(tag + "Failed to Reload " + ChatColor.RED + j.name) }
                                 e.printStackTrace()
                             }
@@ -84,7 +84,7 @@ class KotlinTools : JavaPlugin() {
     }
 
     companion object {
-        val tag = (ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: "
+        val tag = (ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Kotlin" + ChatColor.GREEN + "]: "
                 + ChatColor.GRAY)
         private val modification = HashMap<File?, Long>()
         private val lastModified = HashMap<File?, Long>()

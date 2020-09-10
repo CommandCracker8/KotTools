@@ -1,12 +1,12 @@
-name: BileTools
+name: KotlinTools
 version: 2.1
 api-version: 1.15
 main: world.cepi.kotlintools.KotlinTools
-commands: 
-  biletools:
-    description: Manages biletools
-    aliases: [bile]
+commands:
+  kotlintools:
+    description: Manages kotlintools
+    aliases: [kotlin]
 permissions:
-  bile.use: 
-    description: Gives access to biletools
+  kotlin.use:
+    description: Gives access to kotlintools
     default: op

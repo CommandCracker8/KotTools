@@ -23,20 +23,20 @@ class KotlinCommand : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
-        require(sender.hasPermission("bile.use")) {
-            sender.sendMessage(tag + "You need bile.use or OP.")
+        require(sender.hasPermission("kotlin.use")) {
+            sender.sendMessage(tag + "You need kotlin.use or OP.")
             return true
         }
 
         if (args.isEmpty()) {
-            subCommands.forEach { sender.sendMessage("$tag/bile ${it.first} <plugin>") }
+            subCommands.forEach { sender.sendMessage("$tag/kotlin ${it.first} <plugin>") }
             return true
         }
 
         subCommands.forEach {
             if (args[0].equals(it.first, ignoreCase = true)) {
                 require(args.size > 1) {
-                    sender.sendMessage("$tag/bile ${it.first} <PLUGIN>")
+                    sender.sendMessage("$tag/kotlin ${it.first} <PLUGIN>")
                     return true;
                 }
 

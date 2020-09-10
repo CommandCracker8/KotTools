@@ -48,7 +48,7 @@ object KotlinUtils {
 
     private fun stp(s: String) {
         Bukkit.getConsoleSender().sendMessage(
-                ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: " + ChatColor.GRAY + s)
+                ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Kotlin" + ChatColor.GREEN + "]: " + ChatColor.GRAY + s)
     }
 
     @Throws(UnknownDependencyException::class, InvalidPluginException::class, InvalidDescriptionException::class, ZipException::class, IOException::class, InvalidConfigurationException::class)
