@@ -1,7 +1,7 @@
 
 # KotlinTools
 
-![Spigot Gradle CI](https://github.com/Project-Cepi/BileTools/workflows/Spigot%20Gradle%20CI/badge.svg)
+![Spigot Gradle CI](https://github.com/Project-Cepi/KotlinTools/workflows/Spigot%20Gradle%20CI/badge.svg)
 
 KotlinTools allows you to automatically
 reload your kotlin plugins without any command, providing as
