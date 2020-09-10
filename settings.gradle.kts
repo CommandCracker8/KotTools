@@ -1,2 +1,2 @@
-rootProject.name = "BileTools"
+rootProject.name = "KotlinTools"
 

@@ -1,4 +1,4 @@
-package com.cepi.bile
+package world.cepi.kotlintools
 
 import com.google.common.io.Files
 import net.md_5.bungee.api.ChatColor
@@ -17,7 +17,7 @@ import java.util.*
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
-object BileUtils {
+object KotlinUtils {
     @Throws(IOException::class)
     fun delete(plugin: Plugin) {
         val file = getPluginFile(plugin)
@@ -83,6 +83,7 @@ object BileUtils {
         Bukkit.getPluginManager().enablePlugin(target)
     }
 
+    // TODO im deeply scared
     fun unload(plugin: Plugin): Set<File?> {
         val file = getPluginFile(plugin)
         stp("Unloading " + plugin.name)
@@ -187,14 +188,14 @@ object BileUtils {
             }
         }
         val randomUUID = UUID.randomUUID().toString()
-        val ff = File(File(BileTools.bile!!.dataFolder, "temp"), randomUUID)
+        val ff = File(File(KotlinTools.kotlin!!.dataFolder, "temp"), randomUUID)
         System.gc()
         try {
             if (file != null)
                 copy(file, ff)
             file!!.delete()
             copy(ff, file)
-            BileTools.bile!!.reset(file)
+            KotlinTools.kotlin!!.reset(file)
             ff.deleteOnExit()
         } catch (e: IOException) {
             e.printStackTrace()
@@ -254,7 +255,7 @@ object BileUtils {
 
     private fun isPluginJar(f: File): Boolean = f.exists() && f.isFile && f.name.toLowerCase().endsWith(".jar")
 
-    private val pluginsFolder: File = BileTools.folder
+    private val pluginsFolder: File = KotlinTools.folder
 
     @Throws(ZipException::class, IOException::class, InvalidConfigurationException::class, InvalidDescriptionException::class)
     fun getPluginVersion(file: File) = getPluginDescription(file).version

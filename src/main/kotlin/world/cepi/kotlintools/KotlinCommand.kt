@@ -1,11 +1,10 @@
-package com.cepi.bile
+package world.cepi.kotlintools
 
-import com.cepi.bile.BileTools.Companion.tag
-import com.cepi.bile.subcommands.loadCommand
-import com.cepi.bile.subcommands.reloadCommand
-import com.cepi.bile.subcommands.uninstallCommand
-import com.cepi.bile.subcommands.unloadCommand
-import net.md_5.bungee.api.ChatColor
+import world.cepi.kotlintools.KotlinTools.Companion.tag
+import world.cepi.kotlintools.subcommands.loadCommand
+import world.cepi.kotlintools.subcommands.reloadCommand
+import world.cepi.kotlintools.subcommands.uninstallCommand
+import world.cepi.kotlintools.subcommands.unloadCommand
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -14,7 +13,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.util.StringUtil
 import java.util.*
 
-class BileCommand : CommandExecutor, TabCompleter {
+class KotlinCommand : CommandExecutor, TabCompleter {
     val subCommands = listOf(
             "load" to ::loadCommand,
             "unload" to ::unloadCommand,

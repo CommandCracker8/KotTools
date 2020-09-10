@@ -1,7 +1,7 @@
 name: BileTools
 version: 2.1
 api-version: 1.15
-main: com.cepi.bile.BileTools
+main: world.cepi.kotlintools.KotlinTools
 commands: 
   biletools:
     description: Manages biletools

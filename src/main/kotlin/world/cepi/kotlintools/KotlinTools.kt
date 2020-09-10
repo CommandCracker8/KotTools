@@ -1,4 +1,4 @@
-package com.cepi.bile
+package world.cepi.kotlintools
 
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
@@ -8,15 +8,15 @@ import java.io.File
 import java.util.*
 import java.util.logging.Level
 
-class BileTools : JavaPlugin() {
+class KotlinTools : JavaPlugin() {
     private val successSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP
 
     override fun onEnable() {
         config.options().copyDefaults(true)
         saveConfig()
-        bile = this
-        getCommand("bile")!!.setExecutor(BileCommand())
-        getCommand("bile")!!.tabCompleter = BileCommand()
+        kotlin = this
+        getCommand("bile")!!.setExecutor(KotlinCommand())
+        getCommand("bile")!!.tabCompleter = KotlinCommand()
 
         if (config.getBoolean("doAutoUpdate"))
             server.scheduler.scheduleSyncRepeatingTask(this, { onTick() }, 20, 20)
@@ -24,23 +24,23 @@ class BileTools : JavaPlugin() {
 
     fun reset(f: File?) {
         modification[f] = f!!.length()
-        las[f] = f.lastModified()
+        lastModified[f] = f.lastModified()
     }
 
     private fun onTick() {
 
         val files = folder.listFiles()
 
-        require(files != null) // If this throws an error, I dont know what witchery the user committed, but ok.
+        require(files != null) // If this throws an error, I don't know what witchery the user committed, but ok.
 
         for (i in files) {
             if (i.isFile && i.name.toLowerCase().endsWith(".jar")) {
                 if (!modification.containsKey(i)) {
                     logger.log(Level.INFO, "Now Tracking: " + i.name)
                     modification[i] = i.length()
-                    las[i] = i.lastModified()
+                    lastModified[i] = i.lastModified()
                     try {
-                        BileUtils.load(i)
+                        KotlinUtils.load(i)
                         for (player in Bukkit.getOnlinePlayers()) {
                             if (player.hasPermission("bile.use")) {
                                 player.sendMessage(tag + "Hot Dropped " + ChatColor.WHITE + i.name)
@@ -54,15 +54,15 @@ class BileTools : JavaPlugin() {
                                 .forEach { it.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name) }
                     }
                 }
-                if (modification[i] != i.length() || las[i] != i.lastModified()) {
+                if (modification[i] != i.length() || lastModified[i] != i.lastModified()) {
                     modification[i] = i.length()
-                    las[i] = i.lastModified()
+                    lastModified[i] = i.lastModified()
                     for (j in Bukkit.getServer().pluginManager.plugins) {
-                        if (BileUtils.getPluginFile(j) != null
-                                && BileUtils.getPluginFile(j)!!.name == i.name) {
+                        if (KotlinUtils.getPluginFile(j) != null
+                                && KotlinUtils.getPluginFile(j)!!.name == i.name) {
                             logger.info("Plugin Reloading: " + j.name + " <-> " + i.name)
                             try {
-                                BileUtils.reload(j)
+                                KotlinUtils.reload(j)
                                 Bukkit.getOnlinePlayers()
                                         .filter { it.hasPermission("bile.use") }
                                         .forEach {
@@ -87,8 +87,8 @@ class BileTools : JavaPlugin() {
         val tag = (ChatColor.GREEN.toString() + "[" + ChatColor.DARK_GRAY + "Bile" + ChatColor.GREEN + "]: "
                 + ChatColor.GRAY)
         private val modification = HashMap<File?, Long>()
-        private val las = HashMap<File?, Long>()
+        private val lastModified = HashMap<File?, Long>()
         val folder = File("plugins")
-        var bile: BileTools? = null
+        var kotlin: KotlinTools? = null
     }
 }
