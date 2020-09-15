@@ -42,8 +42,15 @@ tasks {
     }
 }
 
+val acceptedDeps = arrayOf("kotlin")
+
 val fatJar = task("fatJar", type = Jar::class) {
     baseName = "${project.name}-fat"
-    from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks["jar"] as CopySpec)
+    from(configurations.compileClasspath.get().map { file ->
+        if (acceptedDeps.any { file.nameWithoutExtension.contains(it) }) {
+            if (file.isDirectory) return@map file
+            else zipTree(file)
+        } else null
+    })
+    with(tasks.jar.get() as CopySpec)
 }
