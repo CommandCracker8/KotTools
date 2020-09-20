@@ -1,5 +1,5 @@
 
-# KotlinTools
+# KotTools
 
 ![Spigot Gradle CI](https://github.com/Project-Cepi/KotlinTools/workflows/Spigot%20Gradle%20CI/badge.svg)
 
