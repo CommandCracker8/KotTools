@@ -1,8 +1,14 @@
-plugins {
-    java
-    kotlin("jvm") version "1.4.0"
-}
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+plugins {
+    // Apply the Kotlin JVM plugin to add support for Kotlin.
+    kotlin("jvm") version "1.5.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
+    `maven-publish`
+
+    // Apply the application plugin to add support for building a jar
+    java
+}
 group = "world.cepi.kotlintools"
 version = "1.0-SNAPSHOT"
 
@@ -12,45 +18,50 @@ repositories {
 }
 
 dependencies {
-    implementation("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
-    compile(kotlin("stdlib"))
-    compile(kotlin("reflect"))
+
+    // Align versions of all Kotlin components
+    compileOnly(platform("org.jetbrains.kotlin:kotlin-bom"))
+
+    // Use the Kotlin JDK 8 standard library.
+    implementation(kotlin("stdlib"))
+
+    // Use the Kotlin reflect library.
+    implementation(kotlin("reflect"))
+
+    // Add papermc
+    compileOnly("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
+
+    // add test lib
     testImplementation(kotlin("test-junit5"))
 }
 
-configurations.compile.get().isTransitive = false
-
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks {
-    withType(JavaCompile::class) {
-        options.isIncremental = true
+    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        archiveBaseName.set("kottools")
+        mergeServiceFiles()
+
     }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+    test { useJUnitPlatform() }
 
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+    build { dependsOn(shadowJar) }
 
-    "build" {
-        dependsOn(fatJar)
-    }
 }
 
-val acceptedDeps = arrayOf("kotlin")
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
-val fatJar = task("fatJar", type = Jar::class) {
-    baseName = "${project.name}-fat"
-    from(configurations.compileClasspath.get().map { file ->
-        if (acceptedDeps.any { file.nameWithoutExtension.contains(it) }) {
-            if (file.isDirectory) return@map file
-            else zipTree(file)
-        } else null
-    })
-    with(tasks.jar.get() as CopySpec)
+tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "11" }
+val compileKotlin: KotlinCompile by tasks
+
+configurations {
+    testImplementation {
+        extendsFrom(configurations.compileOnly.get())
+    }
 }

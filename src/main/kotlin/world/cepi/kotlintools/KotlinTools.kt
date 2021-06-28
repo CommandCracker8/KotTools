@@ -33,8 +33,10 @@ class KotlinTools : JavaPlugin() {
 
         require(files != null) // If this throws an error, I don't know what witchery the user committed, but ok.
 
-        for (i in files) {
-            if (i.isFile && i.name.toLowerCase().endsWith(".jar")) {
+        files
+            .filter { it.isFile }
+            .filter { it.name.lowercase().endsWith(".jar") }
+            .forEach { i ->
                 if (!modification.containsKey(i)) {
                     logger.log(Level.INFO, "Now Tracking: " + i.name)
                     modification[i] = i.length()
@@ -50,8 +52,8 @@ class KotlinTools : JavaPlugin() {
                     } catch (e: Throwable) {
                         e.printStackTrace()
                         Bukkit.getOnlinePlayers()
-                                .filter { it.hasPermission("kotlin.use") }
-                                .forEach { it.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name) }
+                            .filter { it.hasPermission("kotlin.use") }
+                            .forEach { it.sendMessage(tag + "Failed to hot drop " + ChatColor.RED + i.name) }
                     }
                 }
                 if (modification[i] != i.length() || lastModified[i] != i.lastModified()) {
@@ -59,20 +61,20 @@ class KotlinTools : JavaPlugin() {
                     lastModified[i] = i.lastModified()
                     for (j in Bukkit.getServer().pluginManager.plugins) {
                         if (KotlinUtils.getPluginFile(j) != null
-                                && KotlinUtils.getPluginFile(j)!!.name == i.name) {
+                            && KotlinUtils.getPluginFile(j)!!.name == i.name) {
                             logger.info("Plugin Reloading: " + j.name + " <-> " + i.name)
                             try {
                                 KotlinUtils.reload(j)
                                 Bukkit.getOnlinePlayers()
-                                        .filter { it.hasPermission("kotlin.use") }
-                                        .forEach {
-                                    it.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.name)
-                                    it.playSound(it.location, successSound, 1f, 1.9f)
-                                }
+                                    .filter { it.hasPermission("kotlin.use") }
+                                    .forEach {
+                                        it.sendMessage(tag + "Reloaded " + ChatColor.WHITE + j.name)
+                                        it.playSound(it.location, successSound, 1f, 1.9f)
+                                    }
                             } catch (e: Throwable) {
                                 Bukkit.getOnlinePlayers()
-                                        .filter { it.hasPermission("kotlin.use") }
-                                        .forEach { it.sendMessage(tag + "Failed to Reload " + ChatColor.RED + j.name) }
+                                    .filter { it.hasPermission("kotlin.use") }
+                                    .forEach { it.sendMessage(tag + "Failed to Reload " + ChatColor.RED + j.name) }
                                 e.printStackTrace()
                             }
                             break
@@ -80,7 +82,6 @@ class KotlinTools : JavaPlugin() {
                     }
                 }
             }
-        }
     }
 
     companion object {
